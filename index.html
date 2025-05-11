@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Morpion</title>
+  </head>
+  <body>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        user-select: none;
+      }
+      .grid {
+        display: grid;
+        grid-template-rows: repeat(3, minmax(20px, 100px));
+        grid-template-columns: repeat(3, minmax(20px, 100px));
+        grid-gap: clamp(2px, min(1vw, 1vh), 5px);
+        background-color: rgb(35, 74, 107);
+        width: fit-content;
+        padding: clamp(2px, min(1vw, 1vh), 5px);
+      }
+      .cell {
+        background-color: #06a3a3;
+        font-size: clamp(20px, 5vw, 50px);
+        color: #fff;
+        text-align: center;
+        line-height: clamp(20px, 5vw, 50px);
+      }
+    </style>
+    <div class="grid">
+      <div class="cell" data-row="1" data-col="1"></div>
+      <div class="cell" data-row="1" data-col="2"></div>
+      <div class="cell" data-row="1" data-col="3"></div>
+      <div class="cell" data-row="2" data-col="1"></div>
+      <div class="cell" data-row="2" data-col="2"></div>
+      <div class="cell" data-row="2" data-col="3"></div>
+      <div class="cell" data-row="3" data-col="1"></div>
+      <div class="cell" data-row="3" data-col="2"></div>
+      <div class="cell" data-row="3" data-col="3"></div>
+    </div>
+    <script>
+      const grid = document.querySelector(".grid");
+      const o = 0;
+      const x = 1;
+      let turn = o;
+      const playedCells = new Set();
+      let winning;
+      const cells = Array.from(document.querySelectorAll(".cell"));
+      cells.forEach((cell) => {
+        cell.addEventListener("click", () => {
+          if (winning) return;
+          const row = cell.dataset.row;
+          const col = cell.dataset.col;
+          const key = `${row},${col}`;
+          if (playedCells.has(key)) return;
+          if (turn == o) {
+            cell.innerHTML = "O";
+          } else {
+            cell.innerHTML = "X";
+          }
+          checkWin();
+          playedCells.add(key);
+          turn = !turn;
+        });
+      });
+      function checkWin() {
+        const board = [
+          [null, null, null],
+          [null, null, null],
+          [null, null, null],
+        ];
+        cells.forEach((cell) => {
+          const row = parseInt(cell.dataset.row) - 1;
+          const col = parseInt(cell.dataset.col) - 1;
+          board[row][col] = cell.textContent;
+        });
+        function isWinningLine(a, b, c) {
+          return a && a === b && a === c;
+        }
+        for (let i = 0; i < 3; i++) {
+          if (isWinningLine(board[i][0], board[i][1], board[i][2])) {
+            alert(`${board[i][0]} a gagné !`);
+            winning = true;
+            return;
+          }
+          if (isWinningLine(board[0][i], board[1][i], board[2][i])) {
+            alert(`${board[0][i]} a gagné !`);
+            winning = true;
+            return;
+          }
+        }
+        if (isWinningLine(board[0][0], board[1][1], board[2][2])) {
+          alert(`${board[0][0]} a gagné !`);
+          winning = true;
+          return;
+        }
+        if (isWinningLine(board[0][2], board[1][1], board[2][0])) {
+          alert(`${board[0][2]} a gagné !`);
+          winning = true;
+          return;
+        }
+      }
+    </script>
+  </body>
+</html>
